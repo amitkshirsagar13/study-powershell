@@ -11,8 +11,6 @@ Write-Host "Hashed String: $hashedString "
 
 $unhashedString = ConvertTo-SecureString -String $hashedString
 Write-Host "UnHashed String: $unhashedString "
-
-
 $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($unhashedString)
 $UnsecurePassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
 
