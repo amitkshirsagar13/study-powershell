@@ -38,16 +38,16 @@ Param (
     Write-Host "Creator: $creator"
 }
 
-cls
-Write-Host ""
-Print-Pyramid -name Aarthi
-Write-Host ""
-Print-Pyramid -name Aarthi -char '0'
-Write-Host ""
-Print-Pyramid -name Aarthi -char '0' -creator Amit
-Write-Host ""
-$height = $( Read-Host "How tall u need your pyramid: " )
-Print-Pyramid -name Aarthi -char '0' -creator Amit -height $height
+# cls
+# Write-Host ""
+# Print-Pyramid -name Aarthi
+# Write-Host ""
+# Print-Pyramid -name Aarthi -char '0'
+# Write-Host ""
+# Print-Pyramid -name Aarthi -char '0' -creator Amit
+# Write-Host ""
+# $height = $( Read-Host "How tall u need your pyramid: " )
+# Print-Pyramid -name Aarthi -char '0' -creator Amit -height $height
 Write-Host ""
 Print-Pyramid
 
