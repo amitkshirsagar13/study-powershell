@@ -53,7 +53,7 @@ function CopyPemCerts {
         Add-Content -Path $fileName -Value $line
     }
 
-    openssl pkcs12 -export -in cert.crt -inkey cert.key -passin pass:Password! -out tmpKeyVaultCertFromPem.pfx -passout pass:Password!
+    openssl pkcs12 -export -in cert.crt -inkey cert.key -passin pass:$password -out tmpKeyVaultCertFromPem.pfx -passout pass:$password
 
 
     $SecurePassword = ConvertTo-SecureString $password -asplaintext -force
