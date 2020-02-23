@@ -23,9 +23,9 @@ Param ([string] $srcSubId = "368eb6b3-4e02-4d22-a05d-767dc9dc4819",
   $secret = $(Get-AzKeyVaultSecret -VaultName $srcVaultName -Name $certName)
   Write-Host $secret.SecretValueText
   $secretByte = [Convert]::FromBase64String($secret.SecretValueText)
-  [System.IO.File]::WriteAllBytes("tmpKeyVaultCertByte.pfx", $secretByte)
+  [System.IO.File]::WriteAllBytes("tmpKeyVaultCertByte.blob", $secretByte)
 
-  $x509Cert = New-Object -TypeName System.Security.Cryptography.X509Certificates.X509Certificate2("tmpKeyVaultCertByte.pfx");
+  $x509Cert = New-Object -TypeName System.Security.Cryptography.X509Certificates.X509Certificate2("tmpKeyVaultCertByte.blob");
   $type = [System.Security.Cryptography.X509Certificates.X509ContentType]::Pfx
   $pfxFileByte = $x509Cert.Export($type, $password)
   # # Write to a file
@@ -81,7 +81,8 @@ $PlainPassword = 'Pa$$W0rd'
 $SecurePassword = ConvertTo-SecureString $PlainPassword -asplaintext -force
 $password = TextPassword -SecurePassword $SecurePassword
 # Write-Host $password
-CopyPfxCerts -srcVaultName 'devVault-src' -destVaultName 'devVault-dest' -certName 'test-cert' -SecurePassword $SecurePassword
+CopyPfxCerts -srcVaultName 'devVault-src' -destVaultName 'devVault-dest' -certName 'test-cert-pfx' -SecurePassword $SecurePassword
 CopyPemCerts -srcVaultName 'devVault-src' -destVaultName 'devVault-dest' -certName 'test-cert-pem' -SecurePassword $SecurePassword
 
-Remove-Item cert* tmpK*
+Remove-Item cert*
+Remove-Item tmpK*
