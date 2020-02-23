@@ -10,17 +10,17 @@ function TextPassword {
 }
  
 function CopyPfxCerts {
-Param ([string] $devSubId = "368eb6b3-4e02-4d22-a05d-767dc9dc4819",
-        [string] $stageSubId = "368eb6b3-4e02-4d22-a05d-767dc9dc4819",
-        [string] $devVaultName = $(throw "Required -devVaultName"),
-        [string] $stgVaultName = $(throw "Required -stgVaultName"),
+Param ([string] $srcSubId = "368eb6b3-4e02-4d22-a05d-767dc9dc4819",
+        [string] $destSubId = "368eb6b3-4e02-4d22-a05d-767dc9dc4819",
+        [string] $srcVaultName = $(throw "Required -srcVaultName"),
+        [string] $destVaultName = $(throw "Required -destVaultName"),
         [string] $certName = $(throw "Required -certName"),
         [SecureString] $SecurePassword = $(throw "Required -SecurePassword")
 )
   Write-host "Copy starting $certName"
-  Select-AzSubscription -Subscription $devSubId
-  # $cert = $(Get-AzKeyVaultCertificate -VaultName $devVaultName -Name $certName)
-  $secret = $(Get-AzKeyVaultSecret -VaultName $devVaultName -Name $certName)
+  Select-AzSubscription -Subscription $srcSubId
+  # $cert = $(Get-AzKeyVaultCertificate -VaultName $srcVaultName -Name $certName)
+  $secret = $(Get-AzKeyVaultSecret -VaultName $srcVaultName -Name $certName)
   Write-Host $secret.SecretValueText
   $secretByte = [Convert]::FromBase64String($secret.SecretValueText)
   [System.IO.File]::WriteAllBytes("tmpKeyVaultCertByte.pfx", $secretByte)
@@ -33,23 +33,23 @@ Param ([string] $devSubId = "368eb6b3-4e02-4d22-a05d-767dc9dc4819",
   $password = TextPassword -SecurePassword $SecurePassword
 
   # # Upload to KeyVault
-  Select-AzSubscription -Subscription $stageSubId
-  Import-AzKeyVaultCertificate -VaultName $stgVaultName -Name $certName -Password $SecurePassword -FilePath "tmpKeyVaultCert.pfx"
+  Select-AzSubscription -Subscription $destSubId
+  Import-AzKeyVaultCertificate -VaultName $destVaultName -Name $certName -Password $SecurePassword -FilePath "tmpKeyVaultCert.pfx"
   Write-host "Copy finished: $certName"
 }
 
 function CopyPemCerts {
-  Param ([string] $devSubId = "368eb6b3-4e02-4d22-a05d-767dc9dc4819",
-          [string] $stageSubId = "368eb6b3-4e02-4d22-a05d-767dc9dc4819",
-          [string] $devVaultName = $(throw "Required -devVaultName"),
-          [string] $stgVaultName = $(throw "Required -stgVaultName"),
+  Param ([string] $srcSubId = "368eb6b3-4e02-4d22-a05d-767dc9dc4819",
+          [string] $destSubId = "368eb6b3-4e02-4d22-a05d-767dc9dc4819",
+          [string] $srcVaultName = $(throw "Required -srcVaultName"),
+          [string] $destVaultName = $(throw "Required -destVaultName"),
           [string] $certName = $(throw "Required -certName"),
           [SecureString] $SecurePassword = $(throw "Required -SecurePassword")
   )
     Write-host "Copy starting $certName"
-    Select-AzSubscription -Subscription $devSubId
-    # $cert = $(Get-AzKeyVaultCertificate -VaultName $devVaultName -Name $certName)
-    $secret = $(Get-AzKeyVaultSecret -VaultName $devVaultName -Name $certName)
+    Select-AzSubscription -Subscription $srcSubId
+    # $cert = $(Get-AzKeyVaultCertificate -VaultName $srcVaultName -Name $certName)
+    $secret = $(Get-AzKeyVaultSecret -VaultName $srcVaultName -Name $certName)
     Write-Host $secret.SecretValueText
 
     [System.IO.File]::WriteAllLines("tmpKeyVaultCert.pem", $secret.SecretValueText)
@@ -69,19 +69,19 @@ function CopyPemCerts {
     $password = TextPassword -SecurePassword $SecurePassword
   
     # # Upload to KeyVault
-    Select-AzSubscription -Subscription $stageSubId
-    Import-AzKeyVaultCertificate -VaultName $stgVaultName -Name $certName -Password $SecurePassword -FilePath "tmpKeyVaultCertFromPem.pfx"
+    Select-AzSubscription -Subscription $destSubId
+    Import-AzKeyVaultCertificate -VaultName $destVaultName -Name $certName -Password $SecurePassword -FilePath "tmpKeyVaultCertFromPem.pfx"
     Write-host "Copy finished: $certName"
   }
  
-$devSubId = "368eb6b3-4e02-4d22-a05d-767dc9dc4819"
-$stageSubId = "368eb6b3-4e02-4d22-a05d-767dc9dc4819"
+$srcSubId = "368eb6b3-4e02-4d22-a05d-767dc9dc4819"
+$destSubId = "368eb6b3-4e02-4d22-a05d-767dc9dc4819"
 
 $PlainPassword = 'Pa$$W0rd'
 $SecurePassword = ConvertTo-SecureString $PlainPassword -asplaintext -force
 $password = TextPassword -SecurePassword $SecurePassword
 # Write-Host $password
-CopyPfxCerts -devVaultName 'devVault-src' -stgVaultName 'devVault-dest' -certName 'test-cert' -SecurePassword $SecurePassword
-CopyPemCerts -devVaultName 'devVault-src' -stgVaultName 'devVault-dest' -certName 'test-cert-pem' -SecurePassword $SecurePassword
+CopyPfxCerts -srcVaultName 'devVault-src' -destVaultName 'devVault-dest' -certName 'test-cert' -SecurePassword $SecurePassword
+CopyPemCerts -srcVaultName 'devVault-src' -destVaultName 'devVault-dest' -certName 'test-cert-pem' -SecurePassword $SecurePassword
 
 Remove-Item cert* tmpK*
