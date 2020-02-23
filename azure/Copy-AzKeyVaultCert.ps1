@@ -1,15 +1,26 @@
 
-function SecretValueText {
+function Get-SecretValueText 
+{
+  <#
+  .DESCRIPTION
+  Gets the Text Value of SecureString
+  .PARAMETER SecretValue
+  SecretValue value to be Converted to Text
+  .EXAMPLE
+  $PlainPassword = 'Pa$$W0rd'
+  $SecurePassword = ConvertTo-SecureString $PlainPassword -asplaintext -force
+  Get-SecretTextValue -SecretValue $SecurePassword
+  #>
   Param(
-    [SecureString] $SecurePassword = $(throw "Required -SecurePassword")
+    [Parameter(ValueFromPipeline=$true,Mandatory=$true,Position=1)][SecureString] $SecretValue
   )
-  $hashedString = ConvertFrom-SecureString -SecureString $SecurePassword
+  $hashedString = ConvertFrom-SecureString -SecureString $SecretValue
   $unhashedString = ConvertTo-SecureString -String $hashedString
   $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($unhashedString)
   return [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
 }
 
-function CopyPfxCerts {
+function Copy-PfxCerts {
 Param ([string] $srcSubId = "368eb6b3-4e02-4d22-a05d-767dc9dc4819",
         [string] $destSubId = "368eb6b3-4e02-4d22-a05d-767dc9dc4819",
         [string] $srcVaultName = $(throw "Required -srcVaultName"),
@@ -38,7 +49,7 @@ Param ([string] $srcSubId = "368eb6b3-4e02-4d22-a05d-767dc9dc4819",
   Write-host "Copy finished: $certName"
 }
 
-function CopyPemCerts {
+function Copy-PemCerts {
   Param ([string] $srcSubId = "368eb6b3-4e02-4d22-a05d-767dc9dc4819",
           [string] $destSubId = "368eb6b3-4e02-4d22-a05d-767dc9dc4819",
           [string] $srcVaultName = $(throw "Required -srcVaultName"),
@@ -63,24 +74,24 @@ function CopyPemCerts {
         Add-Content -Path $fileName -Value $line
     }
 
-    openssl pkcs12 -export -in cert.crt -inkey cert.key -passin pass:$password -out tmpKeyVaultCertFromPem.pfx -passout pass:$password
+  openssl pkcs12 -export -in cert.crt -inkey cert.key -passin pass:$password -out tmpKeyVaultCertFromPem.pfx -passout pass:$password
 
-    $password = SecretValueText -SecurePassword $SecurePassword
-  
-    # # Upload to KeyVault
-    Select-AzSubscription -Subscription $destSubId
-    Import-AzKeyVaultCertificate -VaultName $destVaultName -Name $certName -Password $SecurePassword -FilePath "tmpKeyVaultCertFromPem.pfx"
-    Write-host "Copy finished: $certName"
-  }
+  $password = Get-SecretValueText -SecurePassword $SecurePassword
+
+  # # Upload to KeyVault
+  Select-AzSubscription -Subscription $destSubId
+  Import-AzKeyVaultCertificate -VaultName $destVaultName -Name $certName -Password $SecurePassword -FilePath "tmpKeyVaultCertFromPem.pfx"
+  Write-host "Copy finished: $certName"
+}
  
 $srcSubId = "368eb6b3-4e02-4d22-a05d-767dc9dc4819"
 $destSubId = "368eb6b3-4e02-4d22-a05d-767dc9dc4819"
 
 $PlainPassword = 'Pa$$W0rd'
 $SecurePassword = ConvertTo-SecureString $PlainPassword -asplaintext -force
-$password = SecretValueText -SecurePassword $SecurePassword
+$password = Get-SecretValueText -SecurePassword $SecurePassword
 
 Get-ChildItem * -Include "cert*","tmpK*"|Remove-Item
-CopyPfxCerts -srcVaultName 'devVault-src' -destVaultName 'devVault-dest' -certName 'test-cert-pfx' -SecurePassword $SecurePassword
-CopyPemCerts -srcVaultName 'devVault-src' -destVaultName 'devVault-dest' -certName 'test-cert-pem' -SecurePassword $SecurePassword
+Copy-PfxCerts -srcVaultName 'devVault-src' -destVaultName 'devVault-dest' -certName 'test-cert-pfx' -SecurePassword $SecurePassword
+Copy-PemCerts -srcVaultName 'devVault-src' -destVaultName 'devVault-dest' -certName 'test-cert-pem' -SecurePassword $SecurePassword
 Get-ChildItem * -Include "cert*","tmpK*"|Remove-Item
