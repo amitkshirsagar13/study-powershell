@@ -8,7 +8,7 @@ function TextPassword {
   $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($unhashedString)
   return [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
 }
- 
+
 function CopyPfxCerts {
 Param ([string] $srcSubId = "368eb6b3-4e02-4d22-a05d-767dc9dc4819",
         [string] $destSubId = "368eb6b3-4e02-4d22-a05d-767dc9dc4819",
