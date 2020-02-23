@@ -1,0 +1,1 @@
+Get-ChildItem * -Include "cert*","tmpK*"

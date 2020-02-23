@@ -54,7 +54,6 @@ function CopyPemCerts {
 
     [System.IO.File]::WriteAllLines("tmpKeyVaultCert.pem", $secret.SecretValueText)
 
-    Remove-Item cert*
     $regex='-----BEGIN CERTIFICATE-----'
     $fileName='cert.key'
     foreach($line in [System.IO.File]::ReadLines("tmpKeyVaultCert.pem")) {
@@ -80,9 +79,8 @@ $destSubId = "368eb6b3-4e02-4d22-a05d-767dc9dc4819"
 $PlainPassword = 'Pa$$W0rd'
 $SecurePassword = ConvertTo-SecureString $PlainPassword -asplaintext -force
 $password = SecretValueText -SecurePassword $SecurePassword
-# Write-Host $password
+
+Get-ChildItem * -Include "cert*","tmpK*"|Remove-Item
 CopyPfxCerts -srcVaultName 'devVault-src' -destVaultName 'devVault-dest' -certName 'test-cert-pfx' -SecurePassword $SecurePassword
 CopyPemCerts -srcVaultName 'devVault-src' -destVaultName 'devVault-dest' -certName 'test-cert-pem' -SecurePassword $SecurePassword
-
-Remove-Item cert*
-Remove-Item tmpK*
+Get-ChildItem * -Include "cert*","tmpK*"|Remove-Item
