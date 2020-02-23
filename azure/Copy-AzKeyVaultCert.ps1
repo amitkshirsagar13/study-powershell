@@ -1,5 +1,5 @@
 
-function TextPassword {
+function SecretValueText {
   Param(
     [SecureString] $SecurePassword = $(throw "Required -SecurePassword")
   )
@@ -30,7 +30,7 @@ Param ([string] $srcSubId = "368eb6b3-4e02-4d22-a05d-767dc9dc4819",
   $pfxFileByte = $x509Cert.Export($type, $password)
   # # Write to a file
   [System.IO.File]::WriteAllBytes("tmpKeyVaultCert.pfx", $pfxFileByte)
-  $password = TextPassword -SecurePassword $SecurePassword
+  $password = SecretValueText -SecurePassword $SecurePassword
 
   # # Upload to KeyVault
   Select-AzSubscription -Subscription $destSubId
@@ -66,7 +66,7 @@ function CopyPemCerts {
 
     openssl pkcs12 -export -in cert.crt -inkey cert.key -passin pass:$password -out tmpKeyVaultCertFromPem.pfx -passout pass:$password
 
-    $password = TextPassword -SecurePassword $SecurePassword
+    $password = SecretValueText -SecurePassword $SecurePassword
   
     # # Upload to KeyVault
     Select-AzSubscription -Subscription $destSubId
@@ -79,7 +79,7 @@ $destSubId = "368eb6b3-4e02-4d22-a05d-767dc9dc4819"
 
 $PlainPassword = 'Pa$$W0rd'
 $SecurePassword = ConvertTo-SecureString $PlainPassword -asplaintext -force
-$password = TextPassword -SecurePassword $SecurePassword
+$password = SecretValueText -SecurePassword $SecurePassword
 # Write-Host $password
 CopyPfxCerts -srcVaultName 'devVault-src' -destVaultName 'devVault-dest' -certName 'test-cert-pfx' -SecurePassword $SecurePassword
 CopyPemCerts -srcVaultName 'devVault-src' -destVaultName 'devVault-dest' -certName 'test-cert-pem' -SecurePassword $SecurePassword
