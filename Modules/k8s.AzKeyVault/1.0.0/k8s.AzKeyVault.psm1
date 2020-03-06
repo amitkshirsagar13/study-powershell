@@ -21,6 +21,8 @@ function Copy-AzKeyVaultPfxCerts
     $PlainPassword = 'Pa$$W0rd'
     $SecurePassword = ConvertTo-SecureString $PlainPassword -asplaintext -force
     Copy-PfxCerts -srcSubId "$subId" -descSubId "$subId" -srcVaultName 'devVault-src' -destVaultName 'devVault-dest' -certName 'test-cert-pfx' -SecurePassword $SecurePassword
+    .NOTES
+    Author:  Amit Kshirsagar
     #>
     [cmdletbinding()]
     Param ([string] $srcSubId = $(throw "Required -srcSubId"),
@@ -74,6 +76,8 @@ function Copy-AzKeyVaultPemCerts
     $PlainPassword = 'Pa$$W0rd'
     $SecurePassword = ConvertTo-SecureString $PlainPassword -asplaintext -force
     Copy-PemCerts -srcSubId "$subId" -descSubId "$subId" -srcVaultName 'devVault-src' -destVaultName 'devVault-dest' -certName 'test-cert-pem' -SecurePassword $SecurePassword
+    .NOTES
+    Author:  Amit Kshirsagar
     #>
     [cmdletbinding()]
     Param ([string] $srcSubId = $(throw "Required -srcSubId"),

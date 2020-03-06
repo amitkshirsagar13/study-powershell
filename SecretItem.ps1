@@ -1,6 +1,6 @@
 
 class SecretValueItem {
-    [SecureString] $SecretValue;
+    [SecureString] $SecretValue
     [string] $SecretValueText
     SecretValueItem([string] $SecretValueText, [SecureString] $SecretValue) {
         $this.SecretValue = $SecretValue;

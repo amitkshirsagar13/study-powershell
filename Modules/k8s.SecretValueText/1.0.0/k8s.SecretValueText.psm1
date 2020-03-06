@@ -14,6 +14,8 @@ function Get-SecretValueText
   $PlainPassword = 'Pa$$W0rd'
   $SecurePassword = ConvertTo-SecureString $PlainPassword -asplaintext -force
   Get-SecretValueText -SecretValue $SecurePassword
+  .NOTES
+  Author:  Amit Kshirsagar
   #>
   [cmdletbinding()]
   Param(
