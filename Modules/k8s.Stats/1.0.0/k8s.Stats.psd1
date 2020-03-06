@@ -34,7 +34,7 @@
   PowerShellVersion = '5.1'
   DotNetFrameworkVersion = '4.7.2'
   RequiredModules = @()
-  FunctionsToExport = @("Get-Percentile","Get-PercentileStats","Test-JmeterPeformance","Get-PercentileReportCsv2Excel","Compile-JMeterCsvReports")
+  FunctionsToExport = @("Get-Percentile","Measure-FullStats","Get-StatsReportCsv2Excel","Get-PercentileReportCsv2Excel","Compile-JMeterCsvReports")
   # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
   CmdletsToExport = @()
   # Variables to export from this module
