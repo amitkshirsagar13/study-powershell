@@ -33,7 +33,7 @@
     # Minimum version of the PowerShell engine required by this module
     PowerShellVersion = '5.1'
     DotNetFrameworkVersion = '4.7.2'
-    RequiredModules = @("Az","k8s.SecretValueText","k8s.AzKeyVault")
+    RequiredModules = @("Az","k8s.SecretValueText","k8s.AzKeyVault","k8s.Stats")
     FunctionsToExport = @()
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
     CmdletsToExport = @()
