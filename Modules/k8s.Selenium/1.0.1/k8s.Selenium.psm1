@@ -7,7 +7,8 @@ function Get-TestMessage {
 #region Get-SEChrome
 function Get-SEChrome {
   param(
-    [Parameter(Mandatory)][string]$packagePath
+    [Parameter(Mandatory)][string]$packagePath,
+    [Parameter(Mandatory)][string]$os
   )
   Push-Location
   $path = Join-Path $packagePath ".\Selenium.WebDriver.*\lib\net40"
@@ -15,7 +16,7 @@ function Get-SEChrome {
   Write-Host "Load Webdriver!!!"
   Add-Type -Path (Join-Path $pathToWebDriver WebDriver.dll)
   Add-Type -Path (Join-Path $pathToWebDriver WebDriver.Support.dll)
-  $path = Join-Path $packagePath ".\Selenium.WebDriver.ChromeDriver.*\driver\win32"
+  $path = Join-Path $packagePath ".\Selenium.WebDriver.ChromeDriver.*\driver\$os"
   $pathToChromeDriver = Resolve-Path $path
 
   $webdriver = New-Object OpenQA.Selenium.Chrome.ChromeDriver($pathToChromeDriver)
@@ -26,6 +27,7 @@ function Get-SEChrome {
 #region Test-SeleniumLogin
 function Test-SeleniumLogin {
   param(
+    [Parameter(Mandatory)][string]$os,
     [Parameter(Mandatory)][string]$BasePath,
     [Parameter(Mandatory)][string]$EndPoint,
     [Parameter(Mandatory)][string]$IdToken,
@@ -35,7 +37,7 @@ function Test-SeleniumLogin {
   $packages = "Packages"
   $packagePath = Join-Path $BasePath $packages
 
-  [OpenQA.Selenium.Chrome.ChromeDriver]$ChromeDriver = Get-SEChrome -packagePath $packagePath  # Creates an instance of this class to control Selenium and stores it in an easy to handle variable
+  [OpenQA.Selenium.Chrome.ChromeDriver]$ChromeDriver = Get-SEChrome -packagePath $packagePath -os $os  # Creates an instance of this class to control Selenium and stores it in an easy to handle variable
   $seleniumWait = New-Object -TypeName OpenQA.Selenium.Support.UI.WebDriverWait($ChromeDriver, (New-TimeSpan -Seconds 20))
 
   $ChromeDriver.Navigate().GoToURL($EndPoint)

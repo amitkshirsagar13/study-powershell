@@ -1,4 +1,5 @@
 {
+  "OS": "mac64",
   "ClientEndpoint": "https://github.com/login",
   "IdToken": "bundle-urls",
   "AdminUser": "amit.kshirsagar.13@gmail.com",
